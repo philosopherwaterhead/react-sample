@@ -8,22 +8,36 @@ function Square({value,onSquareClick}){
   );
 }
 
+let a = 4;
+console.log(a);
+
 export default function Board() {
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState(Array(16).fill());
+  //const [xIsNext, setXIsNext] = useState(true);
+  //const [squares, setSquares] = useState(Array(16).fill());
+  let xIsNext = true;
+  let squares = Array(16).fill();
+  console.log(squares, xIsNext);
+  console.log(a);
+  console.log('boardrenew');
 
   function handleClick(i){
+    a++;
+    console.log(a);
+    console.log('click');
     if (squares[i] || calculateWinner(squares)){
-      return;
     }
-    const nextSquares = squares.slice();
-    if (xIsNext){
-      nextSquares[i] = "X";
-    } else {
-      nextSquares[i] = "O";
+    else{
+      //const nextSquares = squares.slice();
+      if (xIsNext){
+        squares[i] = "X";
+      } else {
+        squares[i] = "O";
+      }
+      xIsNext = !xIsNext;
+      console.log(squares,xIsNext);
+      //setSquares(nextSquares);
+      //setXIsNext(!xIsNext);
     }
-    // setSquares(nextSquares);
-    setXIsNext(!xIsNext);
   }
 
   return (
