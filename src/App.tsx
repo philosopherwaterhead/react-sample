@@ -8,12 +8,30 @@ function Square({value,onSquareClick}){
   );
 }
 
-export default function Board() {
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState(Array(16).fill());
+function indexnum(i,j,n){
+  return i+j*n;
+}
 
-  function handleClick(i){
-    if (squares[i] || calculateWinner(squares)){
+export default function Board() {
+  const n = 8;
+  const [xIsNext, setXIsNext] = useState(true);
+  const [squares, setSquares] = useState(Array(n*n).fill());
+
+  function genboard(){
+    let allarr = []
+    for(let j=0; j<n; j++){
+      let rowarr = [];
+      for (let i=0; i < n; i++){
+          rowarr.push(<Square value={squares[i+j*n]} onSquareClick={() =>handleClick(indexnum(i,j,n),n)} />)
+        };
+      allarr.push(<div className="board-row">{rowarr}</div>);
+    }
+    return allarr;
+  }
+
+  function handleClick(i,n){
+    //console.log(squares);
+    if (squares[i] || calculateWinner(squares,n)){
     }
     else{
       const nextSquares = squares.slice();
@@ -29,52 +47,65 @@ export default function Board() {
 
   return (
     <>
-      <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)}/>
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)}/>
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)}/>
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)}/>
-      </div>
-      <div className="board-row">
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)}/>
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)}/>
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)}/>
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)}/>
-      </div>
-      <div className="board-row">
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)}/>
-        <Square value={squares[9]} onSquareClick={() => handleClick(9)}/>
-        <Square value={squares[10]} onSquareClick={() => handleClick(10)}/>
-        <Square value={squares[11]} onSquareClick={() => handleClick(11)}/>
-      </div>
-      <div className="board-row">
-        <Square value={squares[12]} onSquareClick={() => handleClick(12)}/>
-        <Square value={squares[13]} onSquareClick={() => handleClick(13)}/>
-        <Square value={squares[14]} onSquareClick={() => handleClick(14)}/>
-        <Square value={squares[15]} onSquareClick={() => handleClick(15)}/>
-      </div>
+        {genboard()}
     </>
   )
 }
 
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2, 3],
-    [4, 5, 6, 7],
-    [8, 9, 10, 11],
-    [12, 13, 14, 15],
-    [0, 4, 8, 12],
-    [1, 5, 9, 13],
-    [2, 6, 10, 14],
-    [3, 7, 11, 15],
-    [0, 5, 10, 15],
-    [3, 6, 9, 12]
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c, d] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c] && squares[a] === squares[d]) {
-      return squares[a];
+  function nCoordList(a,b,n,updisplace,rightdisplace){
+    let arr = []; 
+    for(let i=0;i<n;i++){
+      //ループ1回ごとにrightdisplace右にずれ、-updisplace下にずれる
+      arr.push(indexnum(a+i*rightdisplace,b-i*updisplace,n)); 
     }
+    return arr;
   }
-  return null;
-}
+
+  function winnerLines(n){
+    let winarr =[];
+    for(let j=0;j<n;j++){
+      winarr.push(nCoordList(j,0,n,-1,0)); //列方向,上から下
+    }
+    for(let j=0;j<n;j++){
+      winarr.push(nCoordList(0,j,n,0,1)); //行方向,左から右
+    }
+    winarr.push(nCoordList(0,0,n,-1,1)); //左上から右下
+    winarr.push(nCoordList(n-1,0,n,-1,-1)); //右上から左下
+    return winarr;
+  }
+
+  function isElementAllSame(list){
+    let t = true;
+    for (let i=1; i<list.length; i++){
+      if(list[i]!==list[i-1]){
+        t = false;
+      }
+    }
+    return [t,list[0]];
+  }
+
+  function squarePick(squares,line){
+    let list=[];
+    //console.log(squares);
+    console.log(line);
+    for(let i=0; i<line.length; i++){
+      console.log(line);
+      console.log(squares[line[i]]);
+      list.push(squares[line[i]]);
+    }
+    console.log(list);
+    return list;
+  }
+
+  function calculateWinner(squares,n) {
+    const lines = winnerLines(n);
+    //console.log(squares);
+    console.log(lines);
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+      if (isElementAllSame(squarePick(squares,line))[0]===true) {
+        return isElementAllSame(squarePick(squares,line))[1];
+      }
+    }
+    return null;
+  }
