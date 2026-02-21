@@ -77,6 +77,7 @@ export default function Board() {
   function isElementAllSame(list){
     let t = true;
     for (let i=1; i<list.length; i++){
+      //console.log(list);
       if(list[i]!==list[i-1]){
         t = false;
       }
@@ -87,25 +88,27 @@ export default function Board() {
   function squarePick(squares,line){
     let list=[];
     //console.log(squares);
-    console.log(line);
+    //console.log(line);
     for(let i=0; i<line.length; i++){
-      console.log(line);
-      console.log(squares[line[i]]);
+      //console.log(line);
+      //console.log(squares[line[i]]);
       list.push(squares[line[i]]);
     }
-    console.log(list);
+    //console.log(list);
     return list;
   }
 
   function calculateWinner(squares,n) {
     const lines = winnerLines(n);
     //console.log(squares);
-    console.log(lines);
+    //console.log(lines);
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i];
+      //console.log(isElementAllSame(squarePick(squares,line)));
       if (isElementAllSame(squarePick(squares,line))[0]===true) {
         return isElementAllSame(squarePick(squares,line))[1];
       }
     }
+    console.log(calculateWinner(squares,n));
     return null;
   }
