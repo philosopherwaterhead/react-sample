@@ -31,6 +31,7 @@ export default function Board() {
 
   function handleClick(i,n){
     //console.log(squares);
+    console.log(calculateWinner(squares,n));
     if (squares[i] || calculateWinner(squares,n)){
     }
     else{
@@ -78,7 +79,7 @@ export default function Board() {
     let t = true;
     for (let i=1; i<list.length; i++){
       //console.log(list);
-      if(list[i]!==list[i-1]){
+      if(list[i]!==list[i-1] || list[i] === undefined){
         t = false;
       }
     }
@@ -100,15 +101,19 @@ export default function Board() {
 
   function calculateWinner(squares,n) {
     const lines = winnerLines(n);
+    //console.log(lines.length);
     //console.log(squares);
     //console.log(lines);
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i];
+      //console.log(squares);
+      //console.log(line);
+      //console.log(squarePick(squares,line));
       //console.log(isElementAllSame(squarePick(squares,line)));
-      if (isElementAllSame(squarePick(squares,line))[0]===true) {
+      if (isElementAllSame(squarePick(squares,line))[0]===true && isElementAllSame(squarePick(squares,line))[1] !== undefined) {
         return isElementAllSame(squarePick(squares,line))[1];
       }
     }
-    console.log(calculateWinner(squares,n));
+    //console.log(calculateWinner(squares,n));
     return null;
   }
