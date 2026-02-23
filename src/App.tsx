@@ -48,6 +48,9 @@ export default function Board() {
 
   return (
     <>
+    <h3>
+      {calculateWinner(squares,n)? calculateWinner(squares,n) + "の勝ち" : ""} 
+    </h3>
         {genboard()}
     </>
   )
