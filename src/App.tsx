@@ -8,6 +8,12 @@ function Square({value,onSquareClick}){
   );
 }
 
+function ResetButton({value,onResetClick}){
+  return(
+    <button className="resetbutton" onClick={onResetClick}>Reset</button>
+  );
+}
+
 function indexnum(i,j,n){
   return i+j*n;
 }
@@ -16,6 +22,7 @@ export default function Board() {
   const n = 8;
   const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(n*n).fill());
+  const [history, setHistory] = useState(Array(1).fill(Array(n*n).fill()));
 
   function genboard(){
     let allarr = []
@@ -31,11 +38,12 @@ export default function Board() {
 
   function handleClick(i,n){
     //console.log(squares);
-    console.log(calculateWinner(squares,n));
+    //console.log(calculateWinner(squares,n));
     if (squares[i] || calculateWinner(squares,n)){
     }
     else{
       const nextSquares = squares.slice();
+      //console.log(nextSquares);
       if (xIsNext){
         nextSquares[i] = "X";
       } else {
@@ -43,6 +51,9 @@ export default function Board() {
       }
       setSquares(nextSquares);
       setXIsNext(!xIsNext);
+      const newhistory = history.concat(Array(1).fill(nextSquares));
+      setHistory(newhistory);
+      console.log(history);
     }
   }
 
@@ -52,6 +63,7 @@ export default function Board() {
       {calculateWinner(squares,n)? calculateWinner(squares,n) + "の勝ち" : ""} 
     </h3>
         {genboard()}
+      {calculateWinner(squares,n)? <ResetButton value={squares} onResetClick={()=>setSquares(Array(n*n).fill())}></ResetButton> : ""}
     </>
   )
 }
