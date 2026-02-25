@@ -14,6 +14,12 @@ function ResetButton({value,onResetClick}){
   );
 }
 
+function UndoButton({value,onUndoClick}){
+  return(
+    <button className="undobutton" onClick={onUndoClick}>Undo</button>
+  );
+}
+
 function indexnum(i,j,n){
   return i+j*n;
 }
@@ -23,8 +29,10 @@ export default function Board() {
   const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(n*n).fill());
   const [history, setHistory] = useState(Array(1).fill(Array(n*n).fill()));
+  const [turnNum, setTurnNum] = useState(0);
+  const [undoing, setUndoing] = useState(false);
 
-  function genboard(){
+  function genboard(squares){
     let allarr = []
     for(let j=0; j<n; j++){
       let rowarr = [];
@@ -35,7 +43,7 @@ export default function Board() {
     }
     return allarr;
   }
-
+  
   function handleClick(i,n){
     //console.log(squares);
     //console.log(calculateWinner(squares,n));
@@ -51,8 +59,15 @@ export default function Board() {
       }
       setSquares(nextSquares);
       setXIsNext(!xIsNext);
-      const newhistory = history.concat(Array(1).fill(nextSquares));
+      let newhistory = history.concat(Array(1).fill(nextSquares));
+      console.log(undoing);
+      if (undoing){
+        newhistory = history.slice(0, turnNum);
+      } else {
       setHistory(newhistory);
+      setTurnNum(turnNum+1);
+      }
+      console.log(turnNum);
       console.log(history);
     }
   }
@@ -62,7 +77,8 @@ export default function Board() {
     <h3>
       {calculateWinner(squares,n)? calculateWinner(squares,n) + "の勝ち" : ""} 
     </h3>
-        {genboard()}
+      <UndoButton value={squares} onUndoClick={()=>{setSquares(history[turnNum-1]); setTurnNum(turnNum-1); setUndoing(true); console.log(history); console.log(turnNum);}}></UndoButton>
+      {genboard(squares)}
       {calculateWinner(squares,n)? <ResetButton value={squares} onResetClick={()=>setSquares(Array(n*n).fill())}></ResetButton> : ""}
     </>
   )
